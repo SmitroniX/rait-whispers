@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -9,6 +9,14 @@ import { Send } from "lucide-react";
 export const ConfessionForm = () => {
   const [confession, setConfession] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Get user's IP address
+    fetch("https://api.ipify.org?format=json")
+      .then((res) => res.json())
+      .then((data) => localStorage.setItem("user_ip", data.ip))
+      .catch(() => localStorage.setItem("user_ip", "unknown"));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +33,14 @@ export const ConfessionForm = () => {
 
     setIsSubmitting(true);
 
+    const ipAddress = localStorage.getItem("user_ip") || "unknown";
+
     const { error } = await supabase
       .from("confessions")
-      .insert([{ content: confession.trim() }]);
+      .insert([{ 
+        content: confession.trim(),
+        ip_address: ipAddress
+      }]);
 
     if (error) {
       toast.error("Failed to submit confession. Please try again.");

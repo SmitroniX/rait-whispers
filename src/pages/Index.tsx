@@ -1,25 +1,11 @@
 import { ConfessionForm } from "@/components/ConfessionForm";
 import { ConfessionList } from "@/components/ConfessionList";
-import { Lock } from "lucide-react";
+import { Navigation } from "@/components/Navigation";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
-      <header className="border-b border-primary/20 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg">
-              <Lock className="h-6 w-6 text-white" aria-hidden="true" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                RAIT Confession
-              </h1>
-              <p className="text-sm text-muted-foreground">Anonymous & Safe</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       <main className="container mx-auto px-4 py-8 md:py-12">
         <section className="mb-12">

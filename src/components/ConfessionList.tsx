@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ConfessionCard } from "./ConfessionCard";
 import { Card } from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
 import { MessageSquare } from "lucide-react";
 
 type Confession = {
@@ -17,7 +17,6 @@ export const ConfessionList = () => {
   useEffect(() => {
     fetchConfessions();
     
-    // Subscribe to realtime updates
     const channel = supabase
       .channel("confessions-changes")
       .on(
@@ -78,21 +77,10 @@ export const ConfessionList = () => {
   return (
     <div className="space-y-4">
       {confessions.map((confession, index) => (
-        <Card
+        <ConfessionCard
           key={confession.id}
-          className="confession-card p-6 border-primary/20 animate-fade-in"
-          style={{ animationDelay: `${index * 0.1}s` }}
-        >
-          <p className="text-foreground leading-relaxed mb-4 whitespace-pre-wrap">
-            {confession.content}
-          </p>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MessageSquare className="h-4 w-4" />
-            <time dateTime={confession.created_at}>
-              {formatDistanceToNow(new Date(confession.created_at), { addSuffix: true })}
-            </time>
-          </div>
-        </Card>
+          confession={confession}
+        />
       ))}
     </div>
   );
