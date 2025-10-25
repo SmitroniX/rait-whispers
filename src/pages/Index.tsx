@@ -26,72 +26,88 @@ const Index = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background">
       <Sidebar isAdmin={isAdmin} />
       
-      <main className="flex-1 p-8 max-w-5xl mx-auto">
-        {/* Main Confession Form */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Share Your Confession</h2>
-            <ConfessionForm />
-          </CardContent>
-        </Card>
-
-        {/* Right Sidebar Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <ConfessionList />
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="sticky top-0 z-10 bg-card border-b border-border px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-2xl font-bold">RAIT Confession</h1>
+            <p className="text-sm text-muted-foreground">Anonymous confessions platform</p>
           </div>
-          
-          <div className="space-y-6">
-            {/* Share Your Story Card */}
-            <Card className="bg-gradient-to-br from-secondary to-accent text-white border-0">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-2">Share Your Story</h3>
-                <p className="text-sm mb-4 text-white/90">
-                  Have something on your mind? Share it anonymously with the RAIT community.
-                </p>
-              </CardContent>
-            </Card>
+        </header>
 
-            {/* Trending Now */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <span className="text-primary">📈</span> Trending Now
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  No trending confessions yet<br />
-                  Be the first to share!
-                </p>
-              </CardContent>
-            </Card>
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Main Content */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Confession Form */}
+                <Card>
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">Share Your Confession</h2>
+                    <ConfessionForm />
+                  </CardContent>
+                </Card>
 
-            {/* Popular Tags */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <span className="text-primary">#</span> Popular Tags
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  No popular tags yet<br />
-                  Start using tags in your confessions!
-                </p>
-              </CardContent>
-            </Card>
+                {/* Confession List */}
+                <ConfessionList />
+              </div>
+
+              {/* Right Column - Sidebar Content */}
+              <div className="space-y-4">
+                {/* Share Your Story Card */}
+                <Card className="bg-gradient-to-br from-secondary to-accent text-white border-0">
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold mb-2">Share Your Story</h3>
+                    <p className="text-sm text-white/90">
+                      Have something on your mind? Share it anonymously with the RAIT community.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Trending Now */}
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold mb-4 flex items-center gap-2">
+                      <span className="text-primary">📈</span> Trending Now
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      No trending confessions yet<br />
+                      Be the first to share!
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Popular Tags */}
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold mb-4 flex items-center gap-2">
+                      <span className="text-primary">#</span> Popular Tags
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      No popular tags yet<br />
+                      Start using tags in your confessions!
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <footer className="border-t border-border bg-card py-6 mt-16">
-        <div className="container mx-auto px-8 text-center">
-          <h3 className="font-semibold text-lg mb-2">RAIT Confession</h3>
-          <p className="text-sm text-muted-foreground">
-            An anonymous platform for RAIT students to share their thoughts, experiences, and feelings freely.
-          </p>
-        </div>
-      </footer>
+        {/* Footer */}
+        <footer className="border-t border-border bg-card py-6 mt-auto">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <h3 className="font-semibold text-lg mb-2">RAIT Confession</h3>
+            <p className="text-sm text-muted-foreground">
+              An anonymous platform for RAIT students to share their thoughts, experiences, and feelings freely.
+            </p>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 };
