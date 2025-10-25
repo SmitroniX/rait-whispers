@@ -78,13 +78,13 @@ const Admin = () => {
     <div className="flex min-h-screen">
       <Sidebar isAdmin={isAdmin} />
       
-      <main className="flex-1 p-8 max-w-6xl mx-auto">
-        <div className="mb-8">
+      <main className="flex-1 p-4 lg:p-8 max-w-6xl mx-auto w-full">
+        <div className="mb-6 lg:mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <Shield className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <Shield className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
+            <h1 className="text-2xl lg:text-3xl font-bold">Admin Dashboard</h1>
           </div>
-          <p className="text-muted-foreground">Manage confessions and monitor activity</p>
+          <p className="text-sm lg:text-base text-muted-foreground">Manage confessions and monitor activity</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mb-8">

@@ -54,10 +54,10 @@ const MostLiked = () => {
     <div className="flex min-h-screen">
       <Sidebar isAdmin={isAdmin} />
 
-      <main className="flex-1 p-8 max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-3">Most Liked Confessions ❤️</h1>
-          <p className="text-muted-foreground">Confessions with the most hearts</p>
+      <main className="flex-1 p-4 lg:p-8 max-w-4xl mx-auto w-full">
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl lg:text-3xl font-bold mb-2 lg:mb-3">Most Liked Confessions ❤️</h1>
+          <p className="text-sm lg:text-base text-muted-foreground">Confessions with the most hearts</p>
         </div>
 
         <div className="space-y-4">

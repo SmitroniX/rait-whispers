@@ -129,22 +129,22 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
   };
 
   return (
-    <Card className="confession-card p-6 border-primary/20 animate-fade-in">
-      <p className="text-foreground leading-relaxed mb-4 whitespace-pre-wrap">
+    <Card className="confession-card p-4 lg:p-6 border-primary/20 animate-fade-in">
+      <p className="text-sm lg:text-base text-foreground leading-relaxed mb-4 whitespace-pre-wrap break-words">
         {confession.content}
       </p>
 
-      <div className="flex items-center justify-between mb-4">
-        <time className="text-sm text-muted-foreground">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <time className="text-xs lg:text-sm text-muted-foreground">
           {formatDistanceToNow(new Date(confession.created_at), { addSuffix: true })}
         </time>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 lg:gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleLike}
-            className={isLiked ? "text-primary" : ""}
+            className={`${isLiked ? "text-primary" : ""} text-xs lg:text-sm`}
           >
             <Heart className={`h-4 w-4 mr-1 ${isLiked ? "fill-current" : ""}`} />
             {likesCount}
@@ -154,6 +154,7 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
             variant="ghost"
             size="sm"
             onClick={() => setShowComments(!showComments)}
+            className="text-xs lg:text-sm"
           >
             <MessageCircle className="h-4 w-4 mr-1" />
             {commentsCount}
@@ -164,7 +165,7 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
               variant="ghost"
               size="sm"
               onClick={handleDeleteConfession}
-              className="text-destructive"
+              className="text-destructive text-xs lg:text-sm"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -174,25 +175,34 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
 
       {showComments && (
         <div className="border-t border-primary/20 pt-4 space-y-4">
-          <div className="space-y-3">
-            {comments.map((comment) => (
-              <div key={comment.id} className="bg-muted/30 p-3 rounded-lg">
-                <p className="text-sm">{comment.content}</p>
-                <time className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-                </time>
-              </div>
-            ))}
+          <div className="space-y-3 max-h-64 overflow-y-auto">
+            {comments.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No comments yet. Be the first to comment!</p>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="bg-muted/30 p-3 rounded-lg">
+                  <p className="text-sm break-words">{comment.content}</p>
+                  <time className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                  </time>
+                </div>
+              ))
+            )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Textarea
               placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="min-h-[60px] bg-muted/50 border-primary/30"
+              className="min-h-[60px] flex-1 text-sm"
+              maxLength={500}
             />
-            <Button onClick={handleComment} className="bg-gradient-to-r from-primary to-secondary">
+            <Button 
+              onClick={handleComment} 
+              className="sm:self-end"
+              disabled={!newComment.trim()}
+            >
               Post
             </Button>
           </div>

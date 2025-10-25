@@ -59,10 +59,10 @@ const Trending = () => {
     <div className="flex min-h-screen">
       <Sidebar isAdmin={isAdmin} />
 
-      <main className="flex-1 p-8 max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-3">Trending Confessions 🔥</h1>
-          <p className="text-muted-foreground">
+      <main className="flex-1 p-4 lg:p-8 max-w-4xl mx-auto w-full">
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl lg:text-3xl font-bold mb-2 lg:mb-3">Trending Confessions 🔥</h1>
+          <p className="text-sm lg:text-base text-muted-foreground">
             Most engaging confessions from the past week
           </p>
         </div>
