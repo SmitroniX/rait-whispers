@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Navigation } from "@/components/Navigation";
+import { Sidebar } from "@/components/Sidebar";
 import { ConfessionCard } from "@/components/ConfessionCard";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Shield } from "lucide-react";
 
 const Admin = () => {
@@ -67,46 +67,52 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
-        <Navigation />
-        <div className="container mx-auto px-4 py-8 text-center">Loading...</div>
+      <div className="flex min-h-screen">
+        <Sidebar isAdmin={true} />
+        <div className="flex-1 p-8 text-center">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <Navigation />
+    <div className="flex min-h-screen">
+      <Sidebar isAdmin={isAdmin} />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
+      <main className="flex-1 p-8 max-w-6xl mx-auto">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
             <Shield className="h-8 w-8 text-primary" />
-            <h2 className="text-3xl font-bold">Admin Dashboard</h2>
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           </div>
           <p className="text-muted-foreground">Manage confessions and monitor activity</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mb-8 max-w-4xl mx-auto">
-          <Card className="confession-card p-6 border-primary/20">
-            <h3 className="text-sm text-muted-foreground mb-2">Total Confessions</h3>
-            <p className="text-3xl font-bold text-primary">{stats.total}</p>
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-sm text-muted-foreground mb-2">Total Confessions</h3>
+              <p className="text-3xl font-bold text-primary">{stats.total}</p>
+            </CardContent>
           </Card>
           
-          <Card className="confession-card p-6 border-primary/20">
-            <h3 className="text-sm text-muted-foreground mb-2">With IP Tracking</h3>
-            <p className="text-3xl font-bold text-secondary">{stats.withIp}</p>
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-sm text-muted-foreground mb-2">With IP Tracking</h3>
+              <p className="text-3xl font-bold text-secondary">{stats.withIp}</p>
+            </CardContent>
           </Card>
 
-          <Card className="confession-card p-6 border-primary/20">
-            <h3 className="text-sm text-muted-foreground mb-2">IP Coverage</h3>
-            <p className="text-3xl font-bold text-accent">
-              {stats.total > 0 ? Math.round((stats.withIp / stats.total) * 100) : 0}%
-            </p>
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-sm text-muted-foreground mb-2">IP Coverage</h3>
+              <p className="text-3xl font-bold text-accent">
+                {stats.total > 0 ? Math.round((stats.withIp / stats.total) * 100) : 0}%
+              </p>
+            </CardContent>
           </Card>
         </div>
 
-        <div className="max-w-4xl mx-auto space-y-4">
+        <div className="space-y-4">
           <h3 className="text-xl font-semibold mb-4">All Confessions</h3>
           {confessions.map((confession) => (
             <div key={confession.id}>

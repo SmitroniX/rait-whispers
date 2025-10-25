@@ -1,37 +1,95 @@
 import { ConfessionForm } from "@/components/ConfessionForm";
 import { ConfessionList } from "@/components/ConfessionList";
-import { Navigation } from "@/components/Navigation";
+import { Sidebar } from "@/components/Sidebar";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Index = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    checkAdminStatus();
+  }, []);
+
+  const checkAdminStatus = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      setIsAdmin(!!data);
+    }
+  };
+
   return (
-    <div className="min-h-screen">
-      <Navigation />
-
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        <section className="mb-12">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">Share Your Thoughts</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              A safe and anonymous space for RAIT students to share confessions, thoughts, and secrets.
-              Your identity is completely protected.
-            </p>
-          </div>
-          <div className="max-w-2xl mx-auto">
+    <div className="flex min-h-screen">
+      <Sidebar isAdmin={isAdmin} />
+      
+      <main className="flex-1 p-8 max-w-5xl mx-auto">
+        {/* Main Confession Form */}
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Share Your Confession</h2>
             <ConfessionForm />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
-        <section>
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Recent Confessions</h2>
-          <div className="max-w-4xl mx-auto">
+        {/* Right Sidebar Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
             <ConfessionList />
           </div>
-        </section>
+          
+          <div className="space-y-6">
+            {/* Share Your Story Card */}
+            <Card className="bg-gradient-to-br from-secondary to-accent text-white border-0">
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-2">Share Your Story</h3>
+                <p className="text-sm mb-4 text-white/90">
+                  Have something on your mind? Share it anonymously with the RAIT community.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Trending Now */}
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <span className="text-primary">📈</span> Trending Now
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  No trending confessions yet<br />
+                  Be the first to share!
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Popular Tags */}
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <span className="text-primary">#</span> Popular Tags
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  No popular tags yet<br />
+                  Start using tags in your confessions!
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </main>
 
-      <footer className="border-t border-primary/20 mt-16 py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>&copy; 2025 RAIT Confession. All confessions are anonymous and protected.</p>
+      <footer className="border-t border-border bg-card py-6 mt-16">
+        <div className="container mx-auto px-8 text-center">
+          <h3 className="font-semibold text-lg mb-2">RAIT Confession</h3>
+          <p className="text-sm text-muted-foreground">
+            An anonymous platform for RAIT students to share their thoughts, experiences, and feelings freely.
+          </p>
         </div>
       </footer>
     </div>
