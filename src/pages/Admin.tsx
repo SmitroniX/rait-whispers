@@ -15,6 +15,22 @@ const Admin = () => {
 
   useEffect(() => {
     checkAdminAndFetch();
+
+    const confessionsChannel = supabase
+      .channel('admin-real-time')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'confessions' },
+        () => {
+          fetchConfessions();
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(confessionsChannel);
+    };
   }, []);
 
   const checkAdminAndFetch = async () => {
@@ -79,24 +95,33 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-background">
         <Sidebar isAdmin={true} />
-        <div className="flex-1 p-8 text-center">Loading...</div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
+            <p className="text-muted-foreground">Loading admin dashboard...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background">
       <Sidebar isAdmin={isAdmin} />
       
-      <main className="flex-1 p-4 lg:p-8 max-w-6xl mx-auto w-full">
-        <div className="mb-6 lg:mb-8">
+      <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full lg:ml-0 ml-0">
+        <div className="mb-6 lg:mb-8 mt-12 lg:mt-0">
           <div className="flex items-center gap-3 mb-4">
-            <Shield className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
-            <h1 className="text-2xl lg:text-3xl font-bold">Admin Dashboard</h1>
+            <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Shield className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-xl lg:text-3xl font-bold">Admin Dashboard</h1>
+              <p className="text-xs lg:text-sm text-muted-foreground">Manage and monitor confessions</p>
+            </div>
           </div>
-          <p className="text-sm lg:text-base text-muted-foreground">Manage confessions and monitor activity</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

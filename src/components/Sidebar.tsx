@@ -91,20 +91,30 @@ export const Sidebar = ({ isAdmin }: SidebarProps) => {
       <Sheet>
         <SheetTrigger asChild>
           <Button 
-            variant="ghost" 
+            variant="outline" 
             size="icon"
-            className="fixed top-4 left-4 z-50 lg:hidden bg-card shadow-lg"
+            className="fixed top-3 left-3 z-50 lg:hidden bg-card/95 backdrop-blur-sm shadow-lg border-primary/20 hover:bg-primary/10"
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-5 w-5 text-primary" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-6">
+        <SheetContent side="left" className="w-72 p-6 overflow-y-auto">
+          <div className="mb-6">
+            <h2 className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              RAIT Confession
+            </h2>
+          </div>
           <SidebarContent isAdmin={isAdmin} />
         </SheetContent>
       </Sheet>
 
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block w-64 p-6 bg-card border-r border-border sticky top-0 h-screen overflow-y-auto">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            RAIT Confession
+          </h2>
+        </div>
         <SidebarContent isAdmin={isAdmin} />
       </aside>
     </>

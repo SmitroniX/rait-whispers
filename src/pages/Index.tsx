@@ -77,19 +77,19 @@ const Index = () => {
       
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-lg border-b border-border/50 px-4 lg:px-6 py-4 shadow-sm">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        <header className="sticky top-0 z-20 bg-card/95 backdrop-blur-lg border-b border-border/50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-3 lg:py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-lg sm:text-xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent truncate">
                   RAIT Confession
                 </h1>
-                <p className="text-xs lg:text-sm text-muted-foreground mt-1">Share your thoughts anonymously</p>
+                <p className="text-xs lg:text-sm text-muted-foreground mt-0.5 lg:mt-1">Share anonymously</p>
               </div>
-              <div className="hidden sm:flex items-center gap-4">
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-primary">{confessions.length}</p>
-                  <p className="text-xs text-muted-foreground">Confessions</p>
+              <div className="flex items-center gap-3 lg:gap-4 flex-shrink-0">
+                <div className="text-center">
+                  <p className="text-xl lg:text-2xl font-bold text-primary">{confessions.length}</p>
+                  <p className="text-[10px] lg:text-xs text-muted-foreground whitespace-nowrap">Confessions</p>
                 </div>
               </div>
             </div>

@@ -34,6 +34,33 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
     if (showComments) {
       fetchComments();
     }
+
+    // Real-time subscriptions
+    const likesChannel = supabase
+      .channel(`confession-likes-${confession.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'confession_likes', filter: `confession_id=eq.${confession.id}` },
+        () => fetchLikesCount()
+      )
+      .subscribe();
+
+    const commentsChannel = supabase
+      .channel(`confession-comments-${confession.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'confession_comments', filter: `confession_id=eq.${confession.id}` },
+        () => {
+          fetchCommentsCount();
+          if (showComments) fetchComments();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(likesChannel);
+      supabase.removeChannel(commentsChannel);
+    };
   }, [confession.id, showComments]);
 
   const fetchLikesCount = async () => {
@@ -134,30 +161,30 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
         {confession.content}
       </p>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <time className="text-xs lg:text-sm text-muted-foreground">
           {formatDistanceToNow(new Date(confession.created_at), { addSuffix: true })}
         </time>
         
-        <div className="flex items-center gap-2 lg:gap-4">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleLike}
-            className={`${isLiked ? "text-primary" : ""} text-xs lg:text-sm`}
+            className={`transition-all ${isLiked ? "text-primary scale-105" : "text-muted-foreground hover:text-primary"} text-xs lg:text-sm gap-1.5`}
           >
-            <Heart className={`h-4 w-4 mr-1 ${isLiked ? "fill-current" : ""}`} />
-            {likesCount}
+            <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
+            <span className="font-semibold">{likesCount}</span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowComments(!showComments)}
-            className="text-xs lg:text-sm"
+            className={`transition-all ${showComments ? "text-primary" : "text-muted-foreground hover:text-primary"} text-xs lg:text-sm gap-1.5`}
           >
-            <MessageCircle className="h-4 w-4 mr-1" />
-            {commentsCount}
+            <MessageCircle className="h-4 w-4" />
+            <span className="font-semibold">{commentsCount}</span>
           </Button>
 
           {isAdmin && (
@@ -165,7 +192,7 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
               variant="ghost"
               size="sm"
               onClick={handleDeleteConfession}
-              className="text-destructive text-xs lg:text-sm"
+              className="text-destructive hover:text-destructive/80 text-xs lg:text-sm ml-1"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -174,14 +201,17 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
       </div>
 
       {showComments && (
-        <div className="border-t border-primary/20 pt-4 space-y-4">
-          <div className="space-y-3 max-h-64 overflow-y-auto">
+        <div className="border-t border-primary/20 pt-4 space-y-4 animate-fade-in">
+          <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
             {comments.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">No comments yet. Be the first to comment!</p>
+              <div className="text-center py-8 bg-muted/30 rounded-lg">
+                <MessageCircle className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
+                <p className="text-sm text-muted-foreground">No comments yet. Be the first!</p>
+              </div>
             ) : (
               comments.map((comment) => (
-                <div key={comment.id} className="bg-muted/30 p-3 rounded-lg">
-                  <p className="text-sm break-words">{comment.content}</p>
+                <div key={comment.id} className="bg-muted/40 p-3 rounded-lg border border-primary/10 hover:bg-muted/60 transition-colors">
+                  <p className="text-sm break-words leading-relaxed mb-1">{comment.content}</p>
                   <time className="text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                   </time>
@@ -190,17 +220,17 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <Textarea
               placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="min-h-[60px] flex-1 text-sm"
+              className="min-h-[70px] flex-1 text-sm resize-none"
               maxLength={500}
             />
             <Button 
               onClick={handleComment} 
-              className="sm:self-end"
+              className="sm:self-end h-[70px] sm:h-auto"
               disabled={!newComment.trim()}
             >
               Post
