@@ -3,32 +3,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sidebar } from "@/components/Sidebar";
 import { ConfessionCard } from "@/components/ConfessionCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MessageSquare } from "lucide-react";
 
-const Trending = () => {
+const MostCommented = () => {
   const [confessions, setConfessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    fetchTrendingConfessions();
+    fetchMostCommented();
     checkAdminStatus();
 
     const channel = supabase
-      .channel("trending-updates")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "confessions" },
-        () => fetchTrendingConfessions()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "confession_likes" },
-        () => fetchTrendingConfessions()
-      )
+      .channel("most-commented-updates")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "confession_comments" },
-        () => fetchTrendingConfessions()
+        () => fetchMostCommented()
       )
       .subscribe();
 
@@ -50,29 +41,25 @@ const Trending = () => {
     }
   };
 
-  const fetchTrendingConfessions = async () => {
-    // Get confessions from last 7 days with most engagement (likes + comments)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
+  const fetchMostCommented = async () => {
     const { data: confessionsData } = await supabase
       .from("confessions")
       .select(`
         *,
-        confession_likes(count),
         confession_comments(count)
       `)
-      .gte("created_at", sevenDaysAgo.toISOString())
       .order("created_at", { ascending: false });
 
     if (confessionsData) {
-      // Calculate engagement score and sort
-      const scored = confessionsData.map(c => ({
-        ...c,
-        score: (c.confession_likes?.[0]?.count || 0) * 2 + (c.confession_comments?.[0]?.count || 0)
-      })).sort((a, b) => b.score - a.score);
+      const sorted = confessionsData
+        .map(c => ({
+          ...c,
+          commentCount: c.confession_comments?.[0]?.count || 0
+        }))
+        .filter(c => c.commentCount > 0)
+        .sort((a, b) => b.commentCount - a.commentCount);
 
-      setConfessions(scored);
+      setConfessions(sorted);
     }
 
     setLoading(false);
@@ -84,9 +71,12 @@ const Trending = () => {
 
       <main className="flex-1 p-4 lg:p-8 max-w-4xl mx-auto w-full">
         <div className="mb-6 lg:mb-8">
-          <h1 className="text-2xl lg:text-3xl font-bold mb-2 lg:mb-3">Trending Confessions 🔥</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <MessageSquare className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
+            <h1 className="text-2xl lg:text-3xl font-bold">Most Commented</h1>
+          </div>
           <p className="text-sm lg:text-base text-muted-foreground">
-            Most engaging confessions from the past week
+            Confessions with the most community engagement
           </p>
         </div>
 
@@ -99,11 +89,16 @@ const Trending = () => {
             </>
           ) : confessions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              No trending confessions yet. Be the first to share!
+              No comments yet. Be the first to comment on a confession!
             </div>
           ) : (
             confessions.map((confession) => (
-              <ConfessionCard key={confession.id} confession={confession} />
+              <div key={confession.id} className="relative">
+                <div className="absolute -left-4 top-4 bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
+                  {confession.commentCount}
+                </div>
+                <ConfessionCard confession={confession} isAdmin={isAdmin} />
+              </div>
             ))
           )}
         </div>
@@ -112,4 +107,4 @@ const Trending = () => {
   );
 };
 
-export default Trending;
+export default MostCommented;

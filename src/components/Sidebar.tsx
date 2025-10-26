@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, TrendingUp, Heart, Shield, Menu, X } from "lucide-react";
+import { Home, TrendingUp, Heart, Shield, Menu, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
@@ -17,6 +17,7 @@ const SidebarContent = ({ isAdmin }: SidebarProps) => {
     { path: "/", icon: Home, label: "Home" },
     { path: "/trending", icon: TrendingUp, label: "Trending" },
     { path: "/most-liked", icon: Heart, label: "Most Liked" },
+    { path: "/most-commented", icon: MessageSquare, label: "Most Commented" },
   ];
 
   return (

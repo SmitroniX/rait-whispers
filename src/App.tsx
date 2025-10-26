@@ -9,6 +9,7 @@ import Trending from "./pages/Trending";
 import MostLiked from "./pages/MostLiked";
 import Admin from "./pages/Admin";
 import Install from "./pages/Install";
+import MostCommented from "./pages/MostCommented";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/trending" element={<Trending />} />
           <Route path="/most-liked" element={<MostLiked />} />
+          <Route path="/most-commented" element={<MostCommented />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/install" element={<Install />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

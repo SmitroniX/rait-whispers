@@ -7,9 +7,25 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const Index = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [confessions, setConfessions] = useState<any[]>([]);
+  const [popularTags, setPopularTags] = useState<string[]>([]);
 
   useEffect(() => {
     checkAdminStatus();
+    fetchConfessions();
+    
+    const channel = supabase
+      .channel("home-confessions")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "confessions" },
+        () => fetchConfessions()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const checkAdminStatus = async () => {
@@ -25,16 +41,58 @@ const Index = () => {
     }
   };
 
+  const fetchConfessions = async () => {
+    const { data } = await supabase
+      .from("confessions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    
+    setConfessions(data || []);
+    extractPopularTags(data || []);
+  };
+
+  const extractPopularTags = (confessions: any[]) => {
+    const tagRegex = /#(\w+)/g;
+    const tagCounts: Record<string, number> = {};
+    
+    confessions.forEach(c => {
+      const matches = c.content.matchAll(tagRegex);
+      for (const match of matches) {
+        const tag = match[1];
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      }
+    });
+
+    const sorted = Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([tag]) => tag);
+    
+    setPopularTags(sorted);
+  };
+
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar isAdmin={isAdmin} />
       
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-card border-b border-border px-4 lg:px-6 py-4">
+        <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-lg border-b border-border/50 px-4 lg:px-6 py-4 shadow-sm">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-xl lg:text-2xl font-bold">RAIT Confession</h1>
-            <p className="text-xs lg:text-sm text-muted-foreground">Anonymous confessions platform</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  RAIT Confession
+                </h1>
+                <p className="text-xs lg:text-sm text-muted-foreground mt-1">Share your thoughts anonymously</p>
+              </div>
+              <div className="hidden sm:flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-primary">{confessions.length}</p>
+                  <p className="text-xs text-muted-foreground">Confessions</p>
+                </div>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -87,10 +145,20 @@ const Index = () => {
                     <h3 className="font-semibold mb-4 flex items-center gap-2">
                       <span className="text-primary">#</span> Popular Tags
                     </h3>
-                    <p className="text-sm text-muted-foreground">
-                      No popular tags yet<br />
-                      Start using tags in your confessions!
-                    </p>
+                    {popularTags.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">
+                        No popular tags yet<br />
+                        Start using tags in your confessions!
+                      </p>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {popularTags.map(tag => (
+                          <span key={tag} className="tag-pill">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>

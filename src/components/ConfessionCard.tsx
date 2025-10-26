@@ -130,7 +130,7 @@ export const ConfessionCard = ({ confession, isAdmin, onDelete }: ConfessionCard
 
   return (
     <Card className="confession-card p-4 lg:p-6 border-primary/20 animate-fade-in">
-      <p className="text-sm lg:text-base text-foreground leading-relaxed mb-4 whitespace-pre-wrap break-words">
+      <p className="confession-text text-foreground mb-4 whitespace-pre-wrap break-words">
         {confession.content}
       </p>
 

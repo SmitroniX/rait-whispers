@@ -50,6 +50,18 @@ const Admin = () => {
 
     setConfessions(data || []);
     setLoading(false);
+    
+    const channel = supabase
+      .channel("admin-confessions")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "confessions" },
+        () => {
+          fetchConfessions();
+          fetchStats();
+        }
+      )
+      .subscribe();
   };
 
   const fetchStats = async () => {
@@ -87,33 +99,71 @@ const Admin = () => {
           <p className="text-sm lg:text-base text-muted-foreground">Manage confessions and monitor activity</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <Card>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="border-l-4 border-l-primary">
             <CardContent className="p-6">
-              <h3 className="text-sm text-muted-foreground mb-2">Total Confessions</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm text-muted-foreground">Total Confessions</h3>
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-primary text-xl">📝</span>
+                </div>
+              </div>
               <p className="text-3xl font-bold text-primary">{stats.total}</p>
+              <p className="text-xs text-muted-foreground mt-1">All time</p>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-l-4 border-l-secondary">
             <CardContent className="p-6">
-              <h3 className="text-sm text-muted-foreground mb-2">With IP Tracking</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm text-muted-foreground">With IP Tracking</h3>
+                <div className="h-10 w-10 rounded-full bg-secondary/10 flex items-center justify-center">
+                  <span className="text-secondary text-xl">🔍</span>
+                </div>
+              </div>
               <p className="text-3xl font-bold text-secondary">{stats.withIp}</p>
+              <p className="text-xs text-muted-foreground mt-1">Tracked submissions</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-l-4 border-l-accent">
             <CardContent className="p-6">
-              <h3 className="text-sm text-muted-foreground mb-2">IP Coverage</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm text-muted-foreground">IP Coverage</h3>
+                <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center">
+                  <span className="text-accent text-xl">📊</span>
+                </div>
+              </div>
               <p className="text-3xl font-bold text-accent">
                 {stats.total > 0 ? Math.round((stats.withIp / stats.total) * 100) : 0}%
               </p>
+              <p className="text-xs text-muted-foreground mt-1">Coverage rate</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-primary">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm text-muted-foreground">Recent Activity</h3>
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-primary text-xl">⚡</span>
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-primary">
+                {confessions.filter(c => 
+                  new Date(c.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+                ).length}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">Last 24 hours</p>
             </CardContent>
           </Card>
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold mb-4">All Confessions</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold">All Confessions</h3>
+            <span className="text-sm text-muted-foreground">{confessions.length} total</span>
+          </div>
           {confessions.map((confession) => (
             <div key={confession.id}>
               <ConfessionCard
